@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/common_background"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+        <LinearLayout android:id="@+id/top_content_controls" style="?metaButtonBarStyle"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <Button android:id="@+id/refresh_button" style="?metaButtonBarButtonStyle"
+                android:textColor="#FFFFFFFF" android:background="@drawable/common_button"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="@string/redresh_button" />
+
+        </LinearLayout>
+        <ListView
+            android:id="@+id/bleDeviceListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_alignLeft="@+id/top_content_controls"
+            android:layout_below="@+id/top_content_controls"
+            android:layout_above="@+id/bottom_content_controls"
+            android:choiceMode="singleChoice"
+            android:listSelector="@drawable/bg_key">
+        </ListView>
+<!--
+        <LinearLayout android:id="@+id/bottom_content_controls" style="?metaButtonBarStyle"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <Button android:id="@+id/connect_button" style="?metaButtonBarButtonStyle"
+                android:textColor="#FFFFFFFF" android:background="@drawable/common_button"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="@string/connect_button" />
+
+        </LinearLayout>
+-->
+
+        <FrameLayout
+            android:id="@+id/empty_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:visibility="invisible"
+            android:background="@color/common_background"
+            android:orientation="horizontal">
+            <LinearLayout android:id="@+id/empty_content_controls"
+                style="?metaButtonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:id="@+id/device_icon"
+                    android:src="@drawable/dongle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="@string/missing_dongle_text"
+                    android:textSize="18dp"
+                    android:layout_marginTop="25dp"
+                    android:textColor="#FFFFFFFF"
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <Button android:id="@+id/buy_button"
+                style="?metaButtonBarButtonStyle"
+                android:textColor="#FFFFFFFF"
+                android:background="@drawable/common_button"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/findstore_button" />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/connecting_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:background="@color/common_background"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/connecting_icon"
+                android:src="@drawable/bluetooth_connect"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+        </FrameLayout>
+    </FrameLayout>
+
+</RelativeLayout>

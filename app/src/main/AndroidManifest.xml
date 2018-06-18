@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.madeit.julian.myteletouch"
+    android:versionCode="4"
+    android:versionName="1.3">
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:windowSoftInputMode="stateAlwaysHidden"
+        android:theme="@style/FullscreenTheme"  >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MouseActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_mouse"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".KeyboardActivity"
+            android:configChanges="orientation|keyboard|screenSize"
+            android:label="@string/title_activity_keyboard"
+            android:windowSoftInputMode="stateAlwaysVisible|stateVisible|adjustNothing"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".GamepadActivity"
+            android:screenOrientation="userLandscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_gamepad"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <service android:name=".BluetoothLeService" android:enabled="true"/>
+    </application>
+
+</manifest>

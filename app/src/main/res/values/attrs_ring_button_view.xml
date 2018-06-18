@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="RingButtonView">
+        <attr name="innerColor"  format="color" />
+    </declare-styleable>
+</resources>

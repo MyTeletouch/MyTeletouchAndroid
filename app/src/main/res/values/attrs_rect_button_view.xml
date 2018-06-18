@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="RectButtonView">
+        <attr name="drawLines"  format="boolean" />
+    </declare-styleable>
+</resources>
