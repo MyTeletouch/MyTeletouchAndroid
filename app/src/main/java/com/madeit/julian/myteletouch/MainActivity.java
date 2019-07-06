@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
     private static final long SCAN_PERIOD = 10000;
 
     private Button refreshButton;
-    //private Button connectButton;
     private Button buyButton;
     private final Context context = this;
 
@@ -182,21 +181,6 @@ public class MainActivity extends Activity {
 
         });
 
-/*
-        connectButton = (Button) findViewById(R.id.connect_button);
-        connectButton.setVisibility(View.INVISIBLE);
-        connectButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                connectionIndicator.setVisibility(View.VISIBLE);
-                connectButton.setVisibility(View.INVISIBLE);
-                refreshButton.setEnabled(false);
-                mBluetoothLeService.connect(mDeviceAddress);
-            }
-
-        });
-*/
         buyButton = findViewById(R.id.buy_button);
         buyButton.setOnClickListener(new View.OnClickListener() {
 
@@ -223,7 +207,6 @@ public class MainActivity extends Activity {
                 lastSelected = view;
                 BluetoothDevice device = (BluetoothDevice) mLeDeviceListAdapter.getItem(position);
                 mDeviceAddress = device.getAddress();
-                //connectButton.setVisibility(View.VISIBLE);
                 connectionIndicator.setVisibility(View.VISIBLE);
                 refreshButton.setEnabled(false);
                 mBluetoothLeService.connect(mDeviceAddress);
