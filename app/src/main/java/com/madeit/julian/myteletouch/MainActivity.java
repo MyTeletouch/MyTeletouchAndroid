@@ -1,19 +1,25 @@
 package com.madeit.julian.myteletouch;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -96,9 +102,9 @@ public class MainActivity extends Activity {
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 MainController.getMainController().updateGattServices();
-            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+            }/* else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
 
-            }
+            }*/
         }
     };
 
@@ -162,7 +168,7 @@ public class MainActivity extends Activity {
     public void addListenerOnButton() {
         final Context context = this;
 
-        refreshButton = (Button) findViewById(R.id.refresh_button);
+        refreshButton = findViewById(R.id.refresh_button);
         refreshButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -191,12 +197,12 @@ public class MainActivity extends Activity {
 
         });
 */
-        buyButton = (Button) findViewById(R.id.buy_button);
+        buyButton = findViewById(R.id.buy_button);
         buyButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.myteletouch.com"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.tindie.com/products/16250/"));
                 startActivity(browserIntent);
             }
         });
@@ -204,12 +210,13 @@ public class MainActivity extends Activity {
         mHandler = new Handler();
         mLeDeviceListAdapter = new LeDeviceListAdapter(context);
 
-        bleDeviceListView = (ListView) findViewById(R.id.bleDeviceListView);
+        bleDeviceListView = findViewById(R.id.bleDeviceListView);
         bleDeviceListView.setAdapter(mLeDeviceListAdapter);
         bleDeviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                final BluetoothLeScanner bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+                bluetoothLeScanner.stopScan(mLeScanCallback);
                 if (lastSelected != null)
                     lastSelected.setBackgroundResource(R.color.default_color);
                 view.setBackgroundResource(R.color.pressed_color);
@@ -223,16 +230,25 @@ public class MainActivity extends Activity {
             }
         });
 
-        connectionIndicator = (FrameLayout)findViewById(R.id.connecting_placeholder);
-        connectionIcon = (ImageView)findViewById(R.id.connecting_icon);
+        connectionIndicator = findViewById(R.id.connecting_placeholder);
+        connectionIcon = findViewById(R.id.connecting_icon);
         Animation animationConnect = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
         connectionIcon.startAnimation(animationConnect);
 
-        empty_placeholder = (FrameLayout)findViewById(R.id.empty_placeholder);
+        empty_placeholder = findViewById(R.id.empty_placeholder);
     }
 
 
     private void initBluetooth() {
+        if(this.context.checkCallingOrSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)!=
+                PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.BLUETOOTH,
+                            Manifest.permission.BLUETOOTH_ADMIN,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_ENABLE_BT);
+        }
+
         // Initializes Bluetooth adapter.
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
@@ -244,12 +260,13 @@ public class MainActivity extends Activity {
     }
 
     private void scanLeDevice(final boolean enable) {
+        final BluetoothLeScanner bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
         if (enable) {
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    bluetoothLeScanner.stopScan(mLeScanCallback);
                     refreshButton.setEnabled(true);
                     connectionIndicator.setVisibility(View.INVISIBLE);
                     if(mLeDeviceListAdapter.isEmpty())
@@ -261,24 +278,24 @@ public class MainActivity extends Activity {
             connectionIndicator.setVisibility(View.VISIBLE);
             empty_placeholder.setVisibility(View.INVISIBLE);
             refreshButton.setEnabled(false);
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
+            bluetoothLeScanner.startScan(mLeScanCallback);
         } else {
             refreshButton.setEnabled(true);
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            bluetoothLeScanner.stopScan(mLeScanCallback);
         }
     }
 
     // Device scan callback.
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
+    private ScanCallback mLeScanCallback = new ScanCallback() {
                 @Override
-                public void onLeScan(final BluetoothDevice device, int rssi,
-                                     byte[] scanRecord) {
+                public void onScanResult(final int callbackType, final ScanResult result) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(device.getName() != null &&
-                                    device.getName().equals("MyTeletouch") &&
+                            BluetoothDevice device = result.getDevice();
+                            String name = device.getName();
+                            if(name != null &&
+                                    name.startsWith("MyTeletouch") &&
                                     !mLeDeviceListAdapter.containsDevice(device)) {
                                 connectionIndicator.setVisibility(View.INVISIBLE);
                                 empty_placeholder.setVisibility(View.INVISIBLE);
